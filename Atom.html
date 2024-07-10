@@ -61,17 +61,19 @@
         const atomInfo = document.getElementById('atomInfo');
 
         const elements = [
-    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
-    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr",
-    "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
-    "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-    "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm",
-    "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og"
-];
+            "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
+            "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr",
+            "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
+            "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
+            "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm",
+            "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og"
+        ];
 
 
         let electrons = [];
         let animationId;
+
+
 
         function initializeElectrons() {
             electrons = [];
@@ -107,19 +109,21 @@
             // Draw nucleus
             drawNucleus(protons, neutrons);
 
-            // Draw electron shells
+            // Draw energy levels
             const maxElectronsPerShell = [2, 8, 18, 32];
+            const maxShells = Math.ceil(electronCount / 2);
+            drawEnergyLevels(maxShells);
+
+            // Draw electrons
             let remainingElectrons = electronCount;
             let shellRadius = 80;
 
             for (let i = 0; i < maxElectronsPerShell.length && remainingElectrons > 0; i++) {
                 const electronsInShell = Math.min(remainingElectrons, maxElectronsPerShell[i]);
-                drawElectronShell(shellRadius);
                 remainingElectrons -= electronsInShell;
                 shellRadius += 40;
             }
 
-            // Draw electrons
             electrons.forEach(electron => {
                 const x = 200 + electron.shellRadius * Math.cos(electron.angle);
                 const y = 200 + electron.shellRadius * Math.sin(electron.angle);
@@ -136,9 +140,11 @@
             // Update atom info
             updateAtomInfo(protons, neutrons, electronCount);
 
+            // Add stability indicator (from previous suggestion)
             const stability = getIsotopeStability(protons, neutrons);
             canvas.style.border = stability === "stable" ? "5px solid green" : "5px solid red";
         }
+
 
         function drawNucleus(protons, neutrons) {
             const nucleonRadius = 5;
@@ -187,6 +193,29 @@
 
             atomInfo.innerHTML = info;
         }
+
+        function drawEnergyLevels(maxShells) {
+            const energyLevels = ['K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+            const colors = ['#FF9999', '#99FF99', '#9999FF', '#FFFF99', '#FF99FF', '#99FFFF', '#FFCC99'];
+            let shellRadius = 80;
+
+            for (let i = 0; i < maxShells && i < energyLevels.length; i++) {
+                // Draw colored shell
+                ctx.beginPath();
+                ctx.arc(200, 200, shellRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = colors[i];
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw energy level label
+                ctx.fillStyle = '#000';
+                ctx.font = '16px Arial';
+                ctx.fillText(energyLevels[i], 200 + shellRadius + 5, 200);
+
+                shellRadius += 40;
+            }
+        }
+
 
         function getIsotopeStability(protons, neutrons) {
             const ratio = neutrons / protons;
