@@ -317,13 +317,17 @@
                     info += ` (isotope: ${elementName}-${protons + neutrons})`;
                 }
 
-                // Add new element information
+                // Add element information
                 if (elementInfo[elementName]) {
                     const { mass, electronegativity, uses } = elementInfo[elementName];
                     info += `<br>Atomic Mass: ${mass} u`;
                     info += electronegativity ? `<br>Electronegativity: ${electronegativity}` : "<br>Electronegativity: N/A";
                     info += `<br>Common Uses: ${uses}`;
                 }
+
+                // Add electron configuration
+                const electronConfiguration = getElectronConfiguration(electrons);
+                info += `<br>Electron Configuration: ${electronConfiguration}`;
             }
 
             atomInfo.innerHTML = info;
@@ -362,6 +366,23 @@
                 if (ratio >= 1 && ratio <= 1.5) return "stable";
             }
             return "unstable";
+        }
+
+        function getElectronConfiguration(electrons) {
+            const subshells = ['1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d', '5p', '6s', '4f', '5d', '6p', '7s', '5f', '6d', '7p'];
+            const maxElectrons = [2, 2, 6, 2, 6, 2, 10, 6, 2, 10, 6, 2, 14, 10, 6, 2, 14, 10, 6];
+            let configuration = [];
+            let remainingElectrons = electrons;
+
+            for (let i = 0; i < subshells.length && remainingElectrons > 0; i++) {
+                const electronsInSubshell = Math.min(remainingElectrons, maxElectrons[i]);
+                if (electronsInSubshell > 0) {
+                    configuration.push(`${subshells[i]}${electronsInSubshell}`);
+                }
+                remainingElectrons -= electronsInSubshell;
+            }
+
+            return configuration.join(' ');
         }
 
         function animate() {
