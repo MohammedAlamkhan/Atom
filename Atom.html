@@ -33,6 +33,12 @@
         #atomInfo {
             margin-top: 10px;
             font-weight: bold;
+            max-width: 400px;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
     </style>
 </head>
@@ -68,6 +74,127 @@
             "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm",
             "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og"
         ];
+
+        const elementInfo = {
+            "H": { mass: 1.008, electronegativity: 2.20, uses: "Fuel, water, organic compounds" },
+            "He": { mass: 4.003, electronegativity: null, uses: "Balloons, cryogenics, welding" },
+            "Li": { mass: 6.941, electronegativity: 0.98, uses: "Batteries, alloys, medication" },
+            "Be": { mass: 9.012, electronegativity: 1.57, uses: "Aerospace, X-ray equipment" },
+            "B": { mass: 10.811, electronegativity: 2.04, uses: "Semiconductors, fertilizers" },
+            "C": { mass: 12.011, electronegativity: 2.55, uses: "All organic compounds, steel" },
+            "N": { mass: 14.007, electronegativity: 3.04, uses: "Fertilizers, explosives, plastics" },
+            "O": { mass: 15.999, electronegativity: 3.44, uses: "Water, air, most compounds" },
+            "F": { mass: 18.998, electronegativity: 3.98, uses: "Toothpaste, etching glass" },
+            "Ne": { mass: 20.180, electronegativity: null, uses: "Lighting, cryogenics" },
+            "Na": { mass: 22.990, electronegativity: 0.93, uses: "Salt, street lamps, nerve signals" },
+            "Mg": { mass: 24.305, electronegativity: 1.31, uses: "Alloys, fireworks, agriculture" },
+            "Al": { mass: 26.982, electronegativity: 1.61, uses: "Aircraft, packaging, construction" },
+            "Si": { mass: 28.086, electronegativity: 1.90, uses: "Electronics, glass, solar cells" },
+            "P": { mass: 30.974, electronegativity: 2.19, uses: "Fertilizers, detergents, matches" },
+            "S": { mass: 32.065, electronegativity: 2.58, uses: "Rubber, acids, fungicides" },
+            "Cl": { mass: 35.453, electronegativity: 3.16, uses: "Water treatment, PVC, disinfectants" },
+            "Ar": { mass: 39.948, electronegativity: null, uses: "Welding, lighting, cryogenics" },
+            "K": { mass: 39.098, electronegativity: 0.82, uses: "Fertilizers, soap, food additive" },
+            "Ca": { mass: 40.078, electronegativity: 1.00, uses: "Construction, dairy, fertilizers" },
+            "Sc": { mass: 44.956, electronegativity: 1.36, uses: "Aerospace, lighting" },
+            "Ti": { mass: 47.867, electronegativity: 1.54, uses: "Aircraft, medical devices" },
+            "V": { mass: 50.942, electronegativity: 1.63, uses: "Steel alloys, catalysts" },
+            "Cr": { mass: 51.996, electronegativity: 1.66, uses: "Stainless steel, plating" },
+            "Mn": { mass: 54.938, electronegativity: 1.55, uses: "Steel production, batteries" },
+            "Fe": { mass: 55.845, electronegativity: 1.83, uses: "Construction, tools, blood" },
+            "Co": { mass: 58.933, electronegativity: 1.88, uses: "Magnets, alloys, batteries" },
+            "Ni": { mass: 58.693, electronegativity: 1.91, uses: "Stainless steel, coins, batteries" },
+            "Cu": { mass: 63.546, electronegativity: 1.90, uses: "Wiring, coins, plumbing" },
+            "Zn": { mass: 65.38, electronegativity: 1.65, uses: "Galvanization, alloys, batteries" },
+            "Ga": { mass: 69.723, electronegativity: 1.81, uses: "Electronics, LEDs, semiconductors" },
+            "Ge": { mass: 72.63, electronegativity: 2.01, uses: "Semiconductors, optics, alloys" },
+            "As": { mass: 74.922, electronegativity: 2.18, uses: "Alloys, pesticides, semiconductors" },
+            "Se": { mass: 78.971, electronegativity: 2.55, uses: "Glass production, electronics" },
+            "Br": { mass: 79.904, electronegativity: 2.96, uses: "Flame retardants, water treatment" },
+            "Kr": { mass: 83.798, electronegativity: null, uses: "Lighting, photography" },
+            "Rb": { mass: 85.468, electronegativity: 0.82, uses: "Special glasses, electronics" },
+            "Sr": { mass: 87.62, electronegativity: 0.95, uses: "Fireworks, ceramics" },
+            "Y": { mass: 88.906, electronegativity: 1.22, uses: "LEDs, phosphors, alloys" },
+            "Zr": { mass: 91.224, electronegativity: 1.33, uses: "Nuclear reactors, ceramics" },
+            "Nb": { mass: 92.906, electronegativity: 1.6, uses: "Superalloys, medical devices" },
+            "Mo": { mass: 95.95, electronegativity: 2.16, uses: "Alloys, catalysts, electronics" },
+            "Tc": { mass: 98, electronegativity: 1.9, uses: "Medical imaging, research" },
+            "Ru": { mass: 101.07, electronegativity: 2.2, uses: "Catalysts, electronics" },
+            "Rh": { mass: 102.91, electronegativity: 2.28, uses: "Catalysts, jewelry" },
+            "Pd": { mass: 106.42, electronegativity: 2.20, uses: "Catalysts, electronics" },
+            "Ag": { mass: 107.87, electronegativity: 1.93, uses: "Jewelry, electronics, mirrors" },
+            "Cd": { mass: 112.41, electronegativity: 1.69, uses: "Batteries, pigments" },
+            "In": { mass: 114.82, electronegativity: 1.78, uses: "LCDs, semiconductors" },
+            "Sn": { mass: 118.71, electronegativity: 1.96, uses: "Solder, tin plating" },
+            "Sb": { mass: 121.76, electronegativity: 2.05, uses: "Flame retardants, alloys" },
+            "Te": { mass: 127.60, electronegativity: 2.1, uses: "Thermoelectric devices, alloys" },
+            "I": { mass: 126.90, electronegativity: 2.66, uses: "Disinfectants, medical imaging" },
+            "Xe": { mass: 131.29, electronegativity: null, uses: "Lighting, anesthesia" },
+            "Cs": { mass: 132.91, electronegativity: 0.79, uses: "Atomic clocks, electronics" },
+            "Ba": { mass: 137.33, electronegativity: 0.89, uses: "Drilling fluids, fireworks" },
+            "La": { mass: 138.91, electronegativity: 1.10, uses: "Optics, catalysts" },
+            "Ce": { mass: 140.12, electronegativity: 1.12, uses: "Glass, catalysts" },
+            "Pr": { mass: 140.91, electronegativity: 1.13, uses: "Magnets, glass" },
+            "Nd": { mass: 144.24, electronegativity: 1.14, uses: "Magnets, lasers" },
+            "Pm": { mass: 145, electronegativity: 1.13, uses: "Nuclear batteries" },
+            "Sm": { mass: 150.36, electronegativity: 1.17, uses: "Magnets, nuclear reactors" },
+            "Eu": { mass: 151.96, electronegativity: 1.2, uses: "Phosphors, nuclear reactors" },
+            "Gd": { mass: 157.25, electronegativity: 1.20, uses: "MRI contrast agents, phosphors" },
+            "Tb": { mass: 158.93, electronegativity: 1.2, uses: "Phosphors, magnets" },
+            "Dy": { mass: 162.50, electronegativity: 1.22, uses: "Magnets, lasers" },
+            "Ho": { mass: 164.93, electronegativity: 1.23, uses: "Magnets, lasers" },
+            "Er": { mass: 167.26, electronegativity: 1.24, uses: "Lasers, optical fibers" },
+            "Tm": { mass: 168.93, electronegativity: 1.25, uses: "Lasers, X-ray machines" },
+            "Yb": { mass: 173.04, electronegativity: 1.1, uses: "Lasers, chemical reducing agent" },
+            "Lu": { mass: 174.97, electronegativity: 1.27, uses: "Catalysts, PET scanners" },
+            "Hf": { mass: 178.49, electronegativity: 1.3, uses: "Nuclear reactors, alloys" },
+            "Ta": { mass: 180.95, electronegativity: 1.5, uses: "Capacitors, medical devices" },
+            "W": { mass: 183.84, electronegativity: 2.36, uses: "Light bulb filaments, cutting tools" },
+            "Re": { mass: 186.21, electronegativity: 1.9, uses: "Superalloys, catalysts" },
+            "Os": { mass: 190.23, electronegativity: 2.2, uses: "Electrical contacts, alloys" },
+            "Ir": { mass: 192.22, electronegativity: 2.2, uses: "Catalysts, electrodes" },
+            "Pt": { mass: 195.08, electronegativity: 2.28, uses: "Catalysts, jewelry" },
+            "Au": { mass: 196.97, electronegativity: 2.54, uses: "Jewelry, electronics" },
+            "Hg": { mass: 200.59, electronegativity: 2.00, uses: "Thermometers, dental amalgams" },
+            "Tl": { mass: 204.38, electronegativity: 1.62, uses: "Electronics, glass manufacturing" },
+            "Pb": { mass: 207.2, electronegativity: 2.33, uses: "Batteries, radiation shielding" },
+            "Bi": { mass: 208.98, electronegativity: 2.02, uses: "Medications, cosmetics" },
+            "Po": { mass: 209, electronegativity: 2.0, uses: "Antistatic devices, research" },
+            "At": { mass: 210, electronegativity: 2.2, uses: "Cancer treatment, research" },
+            "Rn": { mass: 222, electronegativity: null, uses: "Radiotherapy, research" },
+            "Fr": { mass: 223, electronegativity: 0.7, uses: "Research" },
+            "Ra": { mass: 226, electronegativity: 0.9, uses: "Radiotherapy, research" },
+            "Ac": { mass: 227, electronegativity: 1.1, uses: "Radiotherapy, research" },
+            "Th": { mass: 232.04, electronegativity: 1.3, uses: "Nuclear fuel, alloys" },
+            "Pa": { mass: 231.04, electronegativity: 1.5, uses: "Research" },
+            "U": { mass: 238.03, electronegativity: 1.38, uses: "Nuclear fuel, military" },
+            "Np": { mass: 237, electronegativity: 1.36, uses: "Research, nuclear fuel" },
+            "Pu": { mass: 244, electronegativity: 1.28, uses: "Nuclear fuel, weapons" },
+            "Am": { mass: 243, electronegativity: 1.3, uses: "Smoke detectors, research" },
+            "Cm": { mass: 247, electronegativity: 1.3, uses: "Research" },
+            "Bk": { mass: 247, electronegativity: 1.3, uses: "Research" },
+            "Cf": { mass: 251, electronegativity: 1.3, uses: "Research" },
+            "Es": { mass: 252, electronegativity: 1.3, uses: "Research" },
+            "Fm": { mass: 257, electronegativity: 1.3, uses: "Research" },
+            "Md": { mass: 258, electronegativity: 1.3, uses: "Research" },
+            "No": { mass: 259, electronegativity: 1.3, uses: "Research" },
+            "Lr": { mass: 262, electronegativity: 1.3, uses: "Research" },
+            "Rf": { mass: 267, electronegativity: null, uses: "Research" },
+            "Db": { mass: 270, electronegativity: null, uses: "Research" },
+            "Sg": { mass: 271, electronegativity: null, uses: "Research" },
+            "Bh": { mass: 270, electronegativity: null, uses: "Research" },
+            "Hs": { mass: 277, electronegativity: null, uses: "Research" },
+            "Mt": { mass: 278, electronegativity: null, uses: "Research" },
+            "Ds": { mass: 281, electronegativity: null, uses: "Research" },
+            "Rg": { mass: 282, electronegativity: null, uses: "Research" },
+            "Cn": { mass: 285, electronegativity: null, uses: "Research" },
+            "Nh": { mass: 286, electronegativity: null, uses: "Research" },
+            "Fl": { mass: 289, electronegativity: null, uses: "Research" },
+            "Mc": { mass: 290, electronegativity: null, uses: "Research" },
+            "Lv": { mass: 293, electronegativity: null, uses: "Research" },
+            "Ts": { mass: 294, electronegativity: null, uses: "Research" },
+            "Og": { mass: 294, electronegativity: null, uses: "Research" }
+        };
 
 
         let electrons = [];
@@ -188,6 +315,14 @@
                     info += " (stable isotope)";
                 } else {
                     info += ` (isotope: ${elementName}-${protons + neutrons})`;
+                }
+
+                // Add new element information
+                if (elementInfo[elementName]) {
+                    const { mass, electronegativity, uses } = elementInfo[elementName];
+                    info += `<br>Atomic Mass: ${mass} u`;
+                    info += electronegativity ? `<br>Electronegativity: ${electronegativity}` : "<br>Electronegativity: N/A";
+                    info += `<br>Common Uses: ${uses}`;
                 }
             }
 
