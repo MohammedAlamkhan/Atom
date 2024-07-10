@@ -53,6 +53,12 @@
             <input type="number" id="neutrons" min="0" max="200" value="0">
             <label for="electrons">Electrons:</label>
             <input type="number" id="electrons" min="1" max="118" value="1">
+            <label for="ionicState">Ionic State:</label>
+            <select id="ionicState">
+                <option value="neutral">Neutral</option>
+                <option value="cation">Cation (+1)</option>
+                <option value="anion">Anion (-1)</option>
+            </select>
         </div>
         <canvas id="atomCanvas" width="400" height="400"></canvas>
         <div id="atomInfo"></div>
@@ -65,6 +71,7 @@
         const neutronInput = document.getElementById('neutrons');
         const electronInput = document.getElementById('electrons');
         const atomInfo = document.getElementById('atomInfo');
+        const ionicStateSelect = document.getElementById('ionicState');
 
         const elements = [
             "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
@@ -311,11 +318,12 @@
                 const elementName = elements[protons - 1];
                 info += `<br>Element: ${elementName}`;
 
-                if (protons === neutrons) {
-                    info += " (stable isotope)";
-                } else {
-                    info += ` (isotope: ${elementName}-${protons + neutrons})`;
-                }
+                // Determine ionic state
+                let ionicState = "neutral";
+                if (electrons < protons) ionicState = `+${protons - electrons}`;
+                if (electrons > protons) ionicState = `-${electrons - protons}`;
+
+                info += ` (${ionicState === "neutral" ? "neutral atom" : "ion " + ionicState})`;
 
                 // Add element information
                 if (elementInfo[elementName]) {
@@ -385,6 +393,22 @@
             return configuration.join(' ');
         }
 
+        function updateElectronCount() {
+            const protons = parseInt(protonInput.value);
+            let electrons = protons;
+
+            switch (ionicStateSelect.value) {
+                case 'cation':
+                    electrons = Math.max(1, protons - 1);
+                    break;
+                case 'anion':
+                    electrons = protons + 1;
+                    break;
+            }
+
+            electronInput.value = electrons;
+        }
+
         function animate() {
             drawAtom();
             animationId = requestAnimationFrame(animate);
@@ -392,6 +416,7 @@
 
         function resetAnimation() {
             cancelAnimationFrame(animationId);
+            updateElectronCount();
             initializeElectrons();
             animate();
         }
@@ -399,7 +424,7 @@
         protonInput.addEventListener('input', resetAnimation);
         neutronInput.addEventListener('input', resetAnimation);
         electronInput.addEventListener('input', resetAnimation);
-
+        ionicStateSelect.addEventListener('change', resetAnimation);
         initializeElectrons();
         animate();
     </script>
