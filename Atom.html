@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Atom Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        canvas {
+            border: 1px solid #000;
+            background-color: #fff;
+        }
+
+        input {
+            width: 50px;
+            margin: 5px;
+        }
+
+        #atomInfo {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Interactive Atom Animation</h1>
+        <div>
+            <label for="protons">Protons:</label>
+            <input type="number" id="protons" min="1" max="118" value="1">
+            <label for="neutrons">Neutrons:</label>
+            <input type="number" id="neutrons" min="0" max="200" value="0">
+            <label for="electrons">Electrons:</label>
+            <input type="number" id="electrons" min="1" max="118" value="1">
+        </div>
+        <canvas id="atomCanvas" width="400" height="400"></canvas>
+        <div id="atomInfo"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('atomCanvas');
+        const ctx = canvas.getContext('2d');
+        const protonInput = document.getElementById('protons');
+        const neutronInput = document.getElementById('neutrons');
+        const electronInput = document.getElementById('electrons');
+        const atomInfo = document.getElementById('atomInfo');
+
+        const elements = [
+    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
+    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr",
+    "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
+    "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
+    "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm",
+    "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og"
+];
+
+
+        let electrons = [];
+        let animationId;
+
+        function initializeElectrons() {
+            electrons = [];
+            const electronCount = parseInt(electronInput.value);
+            const maxElectronsPerShell = [2, 8, 18, 32];
+            let remainingElectrons = electronCount;
+            let shellRadius = 80;
+
+            for (let i = 0; i < maxElectronsPerShell.length && remainingElectrons > 0; i++) {
+                const electronsInShell = Math.min(remainingElectrons, maxElectronsPerShell[i]);
+                const angleStep = (Math.PI * 2) / electronsInShell;
+
+                for (let j = 0; j < electronsInShell; j++) {
+                    electrons.push({
+                        shellRadius: shellRadius,
+                        angle: j * angleStep,
+                        speed: 0.02 / (i + 1) // Slower speed for outer shells
+                    });
+                }
+
+                remainingElectrons -= electronsInShell;
+                shellRadius += 40;
+            }
+        }
+
+        function drawAtom() {
+            const protons = parseInt(protonInput.value);
+            const neutrons = parseInt(neutronInput.value);
+            const electronCount = parseInt(electronInput.value);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw nucleus
+            drawNucleus(protons, neutrons);
+
+            // Draw electron shells
+            const maxElectronsPerShell = [2, 8, 18, 32];
+            let remainingElectrons = electronCount;
+            let shellRadius = 80;
+
+            for (let i = 0; i < maxElectronsPerShell.length && remainingElectrons > 0; i++) {
+                const electronsInShell = Math.min(remainingElectrons, maxElectronsPerShell[i]);
+                drawElectronShell(shellRadius);
+                remainingElectrons -= electronsInShell;
+                shellRadius += 40;
+            }
+
+            // Draw electrons
+            electrons.forEach(electron => {
+                const x = 200 + electron.shellRadius * Math.cos(electron.angle);
+                const y = 200 + electron.shellRadius * Math.sin(electron.angle);
+
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#0000FF';
+                ctx.fill();
+
+                // Update electron position
+                electron.angle += electron.speed;
+            });
+
+            // Update atom info
+            updateAtomInfo(protons, neutrons, electronCount);
+
+            const stability = getIsotopeStability(protons, neutrons);
+            canvas.style.border = stability === "stable" ? "5px solid green" : "5px solid red";
+        }
+
+        function drawNucleus(protons, neutrons) {
+            const nucleonRadius = 5;
+            const nucleusRadius = Math.sqrt(protons + neutrons) * 3 + 10;
+
+            ctx.beginPath();
+            ctx.arc(200, 200, nucleusRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.fill();
+
+            const totalNucleons = protons + neutrons;
+            const angleStep = (Math.PI * 2) / totalNucleons;
+
+            for (let i = 0; i < totalNucleons; i++) {
+                const angle = i * angleStep;
+                const x = 200 + (nucleusRadius - nucleonRadius - 2) * Math.cos(angle);
+                const y = 200 + (nucleusRadius - nucleonRadius - 2) * Math.sin(angle);
+
+                ctx.beginPath();
+                ctx.arc(x, y, nucleonRadius, 0, Math.PI * 2);
+                ctx.fillStyle = i < protons ? '#FF0000' : '#00FF00';
+                ctx.fill();
+            }
+        }
+
+        function drawElectronShell(radius) {
+            ctx.beginPath();
+            ctx.arc(200, 200, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ccc';
+            ctx.stroke();
+        }
+
+        function updateAtomInfo(protons, neutrons, electrons) {
+            let info = `Protons: ${protons}, Neutrons: ${neutrons}, Electrons: ${electrons}`;
+
+            if (protons <= elements.length) {
+                const elementName = elements[protons - 1];
+                info += `<br>Element: ${elementName}`;
+
+                if (protons === neutrons) {
+                    info += " (stable isotope)";
+                } else {
+                    info += ` (isotope: ${elementName}-${protons + neutrons})`;
+                }
+            }
+
+            atomInfo.innerHTML = info;
+        }
+
+        function getIsotopeStability(protons, neutrons) {
+            const ratio = neutrons / protons;
+            if (protons > 82) return "unstable"; // All elements beyond lead are unstable
+            if (protons === neutrons) return "stable";
+            if (protons <= 20) {
+                if (ratio >= 0.8 && ratio <= 1.2) return "stable";
+            } else {
+                if (ratio >= 1 && ratio <= 1.5) return "stable";
+            }
+            return "unstable";
+        }
+
+        function animate() {
+            drawAtom();
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function resetAnimation() {
+            cancelAnimationFrame(animationId);
+            initializeElectrons();
+            animate();
+        }
+
+        protonInput.addEventListener('input', resetAnimation);
+        neutronInput.addEventListener('input', resetAnimation);
+        electronInput.addEventListener('input', resetAnimation);
+
+        initializeElectrons();
+        animate();
+    </script>
+</body>
+
+</html>
