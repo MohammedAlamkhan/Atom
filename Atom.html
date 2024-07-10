@@ -18,6 +18,7 @@
 
         .container {
             text-align: center;
+            width: 100%;
         }
 
         canvas {
@@ -33,7 +34,7 @@
         #atomInfo {
             margin-top: 10px;
             font-weight: bold;
-            max-width: 400px;
+            max-width: 300px;
             text-align: left;
             padding: 10px;
             border: 1px solid #ccc;
@@ -60,7 +61,7 @@
                 <option value="anion">Anion (-1)</option>
             </select>
         </div>
-        <canvas id="atomCanvas" width="400" height="400"></canvas>
+        <canvas id="atomCanvas" width="600" height="600"></canvas>
         <div id="atomInfo"></div>
     </div>
 
@@ -259,8 +260,8 @@
             }
 
             electrons.forEach(electron => {
-                const x = 200 + electron.shellRadius * Math.cos(electron.angle);
-                const y = 200 + electron.shellRadius * Math.sin(electron.angle);
+                const x = 300 + electron.shellRadius * Math.cos(electron.angle);
+                const y = 300 + electron.shellRadius * Math.sin(electron.angle);
 
                 ctx.beginPath();
                 ctx.arc(x, y, 3, 0, Math.PI * 2);
@@ -285,7 +286,7 @@
             const nucleusRadius = Math.sqrt(protons + neutrons) * 3 + 10;
 
             ctx.beginPath();
-            ctx.arc(200, 200, nucleusRadius, 0, Math.PI * 2);
+            ctx.arc(300, 300, nucleusRadius, 0, Math.PI * 2);
             ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
             ctx.fill();
 
@@ -294,8 +295,8 @@
 
             for (let i = 0; i < totalNucleons; i++) {
                 const angle = i * angleStep;
-                const x = 200 + (nucleusRadius - nucleonRadius - 2) * Math.cos(angle);
-                const y = 200 + (nucleusRadius - nucleonRadius - 2) * Math.sin(angle);
+                const x = 300 + (nucleusRadius - nucleonRadius - 2) * Math.cos(angle);
+                const y = 300 + (nucleusRadius - nucleonRadius - 2) * Math.sin(angle);
 
                 ctx.beginPath();
                 ctx.arc(x, y, nucleonRadius, 0, Math.PI * 2);
@@ -306,7 +307,7 @@
 
         function drawElectronShell(radius) {
             ctx.beginPath();
-            ctx.arc(200, 200, radius, 0, Math.PI * 2);
+            ctx.arc(300, 300, radius, 0, Math.PI * 2);
             ctx.strokeStyle = '#ccc';
             ctx.stroke();
         }
@@ -349,7 +350,7 @@
             for (let i = 0; i < maxShells && i < energyLevels.length; i++) {
                 // Draw colored shell
                 ctx.beginPath();
-                ctx.arc(200, 200, shellRadius, 0, Math.PI * 2);
+                ctx.arc(300, 300, shellRadius, 0, Math.PI * 2);
                 ctx.strokeStyle = colors[i];
                 ctx.lineWidth = 2;
                 ctx.stroke();
@@ -357,7 +358,7 @@
                 // Draw energy level label
                 ctx.fillStyle = '#000';
                 ctx.font = '16px Arial';
-                ctx.fillText(energyLevels[i], 200 + shellRadius + 5, 200);
+                ctx.fillText(energyLevels[i], 300 + shellRadius + 5, 300);
 
                 shellRadius += 40;
             }
